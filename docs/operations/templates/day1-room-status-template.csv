@@ -1,0 +1,4 @@
+room_number,room_status,notes
+102,DIRTY,Awaiting housekeeping
+103,VACANT_READY,Ready for sale
+104,DIRTY,Requires deep clean before next check-in

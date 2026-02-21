@@ -1,0 +1,13 @@
+node_modules
+.pnpm-store
+.turbo
+.next
+dist
+coverage
+.env
+.env.local
+.cache
+.DS_Store
+pnpm-debug.log*
+playwright-report
+test-results

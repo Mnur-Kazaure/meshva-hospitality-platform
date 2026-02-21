@@ -1,0 +1,9 @@
+{
+  "name": "Meshva Platform Admin",
+  "short_name": "Platform",
+  "start_url": "/tenants",
+  "display": "standalone",
+  "background_color": "#113076",
+  "theme_color": "#113076",
+  "icons": []
+}

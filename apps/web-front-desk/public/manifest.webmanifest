@@ -1,0 +1,9 @@
+{
+  "name": "Meshva Front Desk",
+  "short_name": "Front Desk",
+  "start_url": "/today-board",
+  "display": "standalone",
+  "background_color": "#113076",
+  "theme_color": "#113076",
+  "icons": []
+}

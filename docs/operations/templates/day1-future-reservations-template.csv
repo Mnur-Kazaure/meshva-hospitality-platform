@@ -1,0 +1,3 @@
+guest_full_name,guest_phone,check_in_date,check_out_date,room_type,adults,children,source,deposit_status,notes
+Jane Smith,+2348098765432,2026-02-22,2026-02-24,Standard,2,0,MANUAL_IMPORT,PROMISED,Booked via phone
+

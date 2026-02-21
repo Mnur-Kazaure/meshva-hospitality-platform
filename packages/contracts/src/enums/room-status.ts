@@ -1,0 +1,8 @@
+export enum RoomStatus {
+  VACANT_READY = 'VACANT_READY',
+  OCCUPIED = 'OCCUPIED',
+  DIRTY = 'DIRTY',
+  CLEANING = 'CLEANING',
+  CLEAN = 'CLEAN',
+  READY = 'READY',
+}

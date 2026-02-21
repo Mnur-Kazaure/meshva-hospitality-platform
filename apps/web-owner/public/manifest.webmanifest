@@ -1,0 +1,9 @@
+{
+  "name": "Meshva Owner Console",
+  "short_name": "Owner",
+  "start_url": "/executive-overview",
+  "display": "standalone",
+  "background_color": "#113076",
+  "theme_color": "#113076",
+  "icons": []
+}

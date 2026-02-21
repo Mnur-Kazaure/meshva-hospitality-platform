@@ -1,0 +1,2 @@
+invoice_reference,guest_full_name,room_number,outstanding_balance_ngn,deposit_received_ngn,payment_method,notes
+INV-OPEN-001,John Doe,101,25000,5000,CASH,Imported opening balance on Day 1

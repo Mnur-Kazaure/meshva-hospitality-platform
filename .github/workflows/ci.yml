@@ -1,0 +1,157 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      NPM_REGISTRY_URL: ${{ secrets.NPM_REGISTRY_URL }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.13.1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          registry-url: ${{ secrets.NPM_REGISTRY_URL }}
+          cache: pnpm
+
+      - name: Validate dependency governance config
+        run: |
+          if [ -z "${NPM_REGISTRY_URL}" ]; then
+            echo "NPM_REGISTRY_URL secret is required."
+            exit 1
+          fi
+          if [ -z "${NPM_TOKEN}" ]; then
+            echo "NPM_TOKEN secret is required."
+            exit 1
+          fi
+
+      - name: Enforce governance checks
+        run: bash scripts/verify-dependency-governance.sh
+
+      - name: Configure internal registry auth
+        run: |
+          REGISTRY_HOST="${NPM_REGISTRY_URL#*://}"
+          REGISTRY_HOST="${REGISTRY_HOST%/}/"
+          pnpm config set registry "${NPM_REGISTRY_URL}"
+          pnpm config set "//${REGISTRY_HOST}:_authToken" "${NPM_TOKEN}"
+
+      - name: Prefetch dependencies
+        run: pnpm fetch --frozen-lockfile
+
+      - name: Install dependencies offline
+        run: pnpm install --offline --frozen-lockfile
+
+      - name: Verify brand assets sync
+        run: pnpm brand:check
+
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
+
+  playwright-e2e:
+    runs-on: ubuntu-latest
+    needs: build
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: meshva_hospitality
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d meshva_hospitality"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      NPM_REGISTRY_URL: ${{ secrets.NPM_REGISTRY_URL }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/meshva_hospitality
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_NAME: meshva_hospitality
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      E2E_DB_RESET: "1"
+      E2E_GUEST_BASE_URL: http://127.0.0.1:3070/home
+      E2E_FRONT_DESK_BASE_URL: http://127.0.0.1:3010
+      E2E_MANAGER_BASE_URL: http://127.0.0.1:3020
+      E2E_FINANCE_BASE_URL: http://127.0.0.1:3030
+      E2E_HOUSEKEEPING_BASE_URL: http://127.0.0.1:3040
+      E2E_OWNER_BASE_URL: http://127.0.0.1:3050
+      E2E_PLATFORM_ADMIN_BASE_URL: http://127.0.0.1:3060
+      E2E_KITCHEN_BASE_URL: http://127.0.0.1:3080
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.13.1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          registry-url: ${{ secrets.NPM_REGISTRY_URL }}
+          cache: pnpm
+
+      - name: Validate dependency governance config
+        run: |
+          if [ -z "${NPM_REGISTRY_URL}" ]; then
+            echo "NPM_REGISTRY_URL secret is required."
+            exit 1
+          fi
+          if [ -z "${NPM_TOKEN}" ]; then
+            echo "NPM_TOKEN secret is required."
+            exit 1
+          fi
+
+      - name: Enforce governance checks
+        run: bash scripts/verify-dependency-governance.sh
+
+      - name: Configure internal registry auth
+        run: |
+          REGISTRY_HOST="${NPM_REGISTRY_URL#*://}"
+          REGISTRY_HOST="${REGISTRY_HOST%/}/"
+          pnpm config set registry "${NPM_REGISTRY_URL}"
+          pnpm config set "//${REGISTRY_HOST}:_authToken" "${NPM_TOKEN}"
+
+      - name: Prefetch dependencies
+        run: pnpm fetch --frozen-lockfile
+
+      - name: Install dependencies offline
+        run: pnpm install --offline --frozen-lockfile
+
+      - name: Build API bundle for e2e runtime
+        run: pnpm --filter @meshva/core-api build
+
+      - name: Bootstrap e2e database
+        run: pnpm e2e:db:bootstrap
+
+      - name: Install Playwright browser
+        run: pnpm e2e:install
+
+      - name: Run Playwright e2e suite
+        run: pnpm e2e:ci
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report
+            test-results
+          if-no-files-found: ignore

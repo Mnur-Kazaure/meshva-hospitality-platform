@@ -1,0 +1,6 @@
+export enum FolioLineType {
+  CHARGE = 'CHARGE',
+  ADJUSTMENT = 'ADJUSTMENT',
+  DISCOUNT = 'DISCOUNT',
+  KITCHEN_CHARGE = 'KITCHEN_CHARGE',
+}

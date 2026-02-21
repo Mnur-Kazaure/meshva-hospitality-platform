@@ -1,0 +1,8 @@
+export enum ReservationStatus {
+  DRAFT = 'DRAFT',
+  CONFIRMED = 'CONFIRMED',
+  PENDING_CONFIRM = 'PENDING_CONFIRM',
+  CANCELLED = 'CANCELLED',
+  EXPIRED = 'EXPIRED',
+  NO_SHOW = 'NO_SHOW',
+}

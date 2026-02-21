@@ -1,0 +1,11 @@
+services:
+  verdaccio:
+    image: verdaccio/verdaccio:5
+    ports:
+      - '4873:4873'
+    volumes:
+      - verdaccio_storage:/verdaccio/storage
+      - verdaccio_conf:/verdaccio/conf
+volumes:
+  verdaccio_storage:
+  verdaccio_conf:

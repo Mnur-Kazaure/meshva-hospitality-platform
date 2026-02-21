@@ -1,0 +1,41 @@
+{
+  "name": "meshva-hospitality",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.13.1",
+  "engines": {
+    "node": "22.16.0",
+    "pnpm": "10.13.1"
+  },
+  "scripts": {
+    "build": "pnpm brand:sync && turbo run build",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "e2e": "playwright test",
+    "e2e:ci": "playwright test --reporter=github,html",
+    "e2e:headed": "playwright test --headed",
+    "e2e:install": "playwright install --with-deps chromium",
+    "e2e:db:bootstrap": "bash scripts/e2e/bootstrap-db.sh",
+    "typecheck": "turbo run typecheck",
+    "brand:sync": "bash scripts/sync-brand-assets.sh",
+    "brand:check": "bash scripts/verify-brand-assets.sh",
+    "smoke:pack-a": "bash scripts/smoke/pack-a-schema-smoke.sh",
+    "smoke:auth": "bash scripts/smoke/auth-rbac-smoke.sh",
+    "smoke:guest-pack7": "bash scripts/smoke/guest-pack7-smoke.sh",
+    "smoke:ops-e2e": "bash scripts/smoke/operations-e2e-smoke.sh",
+    "smoke:governance": "bash scripts/smoke/governance-smoke.sh",
+    "smoke:backend-prod": "bash scripts/smoke/backend-production-readiness.sh",
+    "smoke:qa-master": "bash scripts/smoke/qa-master-gate.sh",
+    "ops:day1:check": "bash scripts/ops/day1-onboarding-readiness.sh",
+    "ops:day1:import": "node scripts/ops/day1-phase2-import.mjs",
+    "deps:bootstrap-lockfile": "bash scripts/bootstrap-lockfile.sh",
+    "deps:verify": "bash scripts/verify-dependency-governance.sh",
+    "deps:prepare-offline": "bash scripts/prepare-offline-install.sh"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "turbo": "^2.5.0",
+    "typescript": "^5.8.2"
+  }
+}

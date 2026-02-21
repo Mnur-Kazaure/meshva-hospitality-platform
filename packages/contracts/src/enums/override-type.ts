@@ -1,0 +1,5 @@
+export enum OverrideType {
+  OVERBOOK = 'OVERBOOK',
+  EXTEND_CONFLICT = 'EXTEND_CONFLICT',
+  RATE_OVERRIDE = 'RATE_OVERRIDE',
+}

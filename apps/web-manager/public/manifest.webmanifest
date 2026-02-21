@@ -1,0 +1,9 @@
+{
+  "name": "Meshva Manager Console",
+  "short_name": "Manager",
+  "start_url": "/ops-overview",
+  "display": "standalone",
+  "background_color": "#f5f8fc",
+  "theme_color": "#113076",
+  "description": "Manager Console for Meshva Hospitality"
+}

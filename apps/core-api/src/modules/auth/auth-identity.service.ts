@@ -19,6 +19,8 @@ export interface StaffIdentityRecord {
 export interface GuestAuthRecord {
   id: string;
   fullName: string;
+  email?: string;
+  phone?: string;
   emailNormalized?: string;
   phoneE164?: string;
   passwordHash: string;
@@ -134,14 +136,18 @@ export class AuthIdentityService {
     const result = await this.postgres.query<{
       id: string;
       full_name: string;
+      email: string | null;
       email_normalized: string | null;
+      phone: string | null;
       phone_e164: string | null;
       password_hash: string;
       status: string;
     }>(
       `SELECT id::text,
               full_name::text,
+              email::text,
               email_normalized::text,
+              phone::text,
               phone_e164::text,
               password_hash::text,
               status::text
@@ -166,14 +172,18 @@ export class AuthIdentityService {
     const result = await this.postgres.query<{
       id: string;
       full_name: string;
+      email: string | null;
       email_normalized: string | null;
+      phone: string | null;
       phone_e164: string | null;
       password_hash: string;
       status: string;
     }>(
       `SELECT id::text,
               full_name::text,
+              email::text,
               email_normalized::text,
+              phone::text,
               phone_e164::text,
               password_hash::text,
               status::text
@@ -304,18 +314,43 @@ export class AuthIdentityService {
   private mapGuestAuth(row: {
     id: string;
     full_name: string;
+    email: string | null;
     email_normalized: string | null;
+    phone: string | null;
     phone_e164: string | null;
     password_hash: string;
     status: string;
   }): GuestAuthRecord {
+    const normalizedEmail = row.email_normalized ?? this.normalizeEmail(row.email);
+    const normalizedPhone = row.phone_e164 ?? this.normalizePhone(row.phone);
+
     return {
       id: row.id,
       fullName: row.full_name,
-      emailNormalized: row.email_normalized ?? undefined,
-      phoneE164: row.phone_e164 ?? undefined,
+      email: row.email ?? undefined,
+      phone: row.phone ?? undefined,
+      emailNormalized: normalizedEmail,
+      phoneE164: normalizedPhone,
       passwordHash: row.password_hash,
       status: row.status,
     };
+  }
+
+  private normalizeEmail(value: string | null | undefined): string | undefined {
+    if (!value) {
+      return undefined;
+    }
+
+    const normalized = value.trim().toLowerCase();
+    return normalized.length > 0 ? normalized : undefined;
+  }
+
+  private normalizePhone(value: string | null | undefined): string | undefined {
+    if (!value) {
+      return undefined;
+    }
+
+    const digits = value.replace(/\D/g, '');
+    return digits.length > 0 ? digits : undefined;
   }
 }

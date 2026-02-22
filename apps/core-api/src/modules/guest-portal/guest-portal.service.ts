@@ -1,4 +1,5 @@
 import {
+  UnauthorizedException,
   BadRequestException,
   ConflictException,
   Inject,
@@ -469,7 +470,7 @@ export class GuestPortalService {
     };
 
     if (strict && !identity.phone && !identity.email) {
-      throw new BadRequestException('x-guest-phone or x-guest-email header is required');
+      throw new UnauthorizedException('AUTH_INVALID_CREDENTIALS');
     }
 
     return identity;

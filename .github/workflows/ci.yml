@@ -95,7 +95,9 @@ jobs:
         run: pnpm install --offline --frozen-lockfile
 
       - name: Build API bundle for e2e runtime
-        run: pnpm --filter @meshva/core-api build
+        run: |
+          pnpm --filter @meshva/contracts build
+          pnpm --filter @meshva/core-api build
 
       - name: Bootstrap e2e database
         run: pnpm e2e:db:bootstrap

@@ -8,7 +8,6 @@ import {
 import { GuestPermissions } from '@meshva/contracts';
 import { createHash, randomUUID } from 'crypto';
 import { AuthIdentityService } from '../../modules/auth/auth-identity.service';
-import { AUTH_COOKIE_ACCESS } from '../../modules/auth/auth.constants';
 import { AuthTokenService } from '../../modules/auth/auth-token.service';
 import { parseCookies } from '../utils/cookies';
 import { AppRequest } from '../types/request-context';
@@ -51,7 +50,8 @@ export class RequestContextGuard implements CanActivate {
     const cookieHeader = this.readHeader(request.headers.cookie);
     const cookies = parseCookies(cookieHeader);
     const bearerToken = this.parseBearerToken(this.readHeader(request.headers.authorization));
-    const accessToken = cookies[AUTH_COOKIE_ACCESS] ?? bearerToken;
+    const accessCookieName = this.authTokenService.cookieNames().access;
+    const accessToken = cookies[accessCookieName] ?? bearerToken;
 
     if (accessToken) {
       const tokenPayload = this.authTokenService.verifyAccessToken(accessToken);

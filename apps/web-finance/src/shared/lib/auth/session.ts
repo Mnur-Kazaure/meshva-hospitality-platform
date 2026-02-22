@@ -9,7 +9,7 @@ import type {
 import { apiGet, apiPost } from './client';
 
 export function getStaffSession(): Promise<StaffSessionDto> {
-  return apiGet<StaffSessionDto>('/auth/me');
+  return apiGet<StaffSessionDto>('/auth/me', { retryOnUnauthorized: false });
 }
 
 export function loginStaff(dto: StaffLoginDto): Promise<StaffSessionDto> {

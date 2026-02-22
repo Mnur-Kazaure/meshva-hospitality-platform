@@ -86,14 +86,16 @@ jobs:
       DB_USER: postgres
       DB_PASSWORD: postgres
       E2E_DB_RESET: "1"
-      E2E_GUEST_BASE_URL: http://127.0.0.1:3070/home
+      E2E_GUEST_BASE_URL: http://127.0.0.1:3070
+      E2E_GUEST_READY_URL: http://127.0.0.1:3070/home
       E2E_FRONT_DESK_BASE_URL: http://127.0.0.1:3010
-      E2E_MANAGER_BASE_URL: http://127.0.0.1:3020
-      E2E_FINANCE_BASE_URL: http://127.0.0.1:3030
-      E2E_HOUSEKEEPING_BASE_URL: http://127.0.0.1:3040
-      E2E_OWNER_BASE_URL: http://127.0.0.1:3050
-      E2E_PLATFORM_ADMIN_BASE_URL: http://127.0.0.1:3060
-      E2E_KITCHEN_BASE_URL: http://127.0.0.1:3080
+      E2E_PLATFORM_ADMIN_URL: http://127.0.0.1:3010/__role/platform-admin
+      E2E_OWNER_URL: http://127.0.0.1:3010/__role/owner
+      E2E_MANAGER_URL: http://127.0.0.1:3010/__role/manager
+      E2E_FRONT_DESK_URL: http://127.0.0.1:3010/today-board
+      E2E_FINANCE_URL: http://127.0.0.1:3010/__role/finance
+      E2E_HOUSEKEEPING_URL: http://127.0.0.1:3010/__role/housekeeping
+      E2E_KITCHEN_URL: http://127.0.0.1:3010/__role/kitchen
     steps:
       - uses: actions/checkout@v4
 

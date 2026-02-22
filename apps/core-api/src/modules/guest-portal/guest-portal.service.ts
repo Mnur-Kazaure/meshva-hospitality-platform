@@ -460,10 +460,12 @@ export class GuestPortalService {
   private getGuestIdentity(request: AppRequest, strict = false): GuestIdentity {
     const phoneHeader = this.readHeader(request.headers['x-guest-phone']);
     const emailHeader = this.readHeader(request.headers['x-guest-email']);
+    const contextPhone = request.context?.guestPhone;
+    const contextEmail = request.context?.guestEmail;
 
     const identity: GuestIdentity = {
-      phone: this.normalizePhone(phoneHeader),
-      email: emailHeader?.trim().toLowerCase(),
+      phone: this.normalizePhone(phoneHeader) ?? this.normalizePhone(contextPhone),
+      email: emailHeader?.trim().toLowerCase() ?? contextEmail?.trim().toLowerCase(),
     };
 
     if (strict && !identity.phone && !identity.email) {

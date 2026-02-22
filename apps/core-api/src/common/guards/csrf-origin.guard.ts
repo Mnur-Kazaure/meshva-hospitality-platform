@@ -5,12 +5,11 @@ import {
   Injectable,
 } from '@nestjs/common';
 import {
-  AUTH_COOKIE_ACCESS,
   AUTH_COOKIE_CSRF,
-  AUTH_COOKIE_REFRESH,
   AUTH_CSRF_INVALID,
   AUTH_ORIGIN_INVALID,
 } from '../../modules/auth/auth.constants';
+import { AuthTokenService } from '../../modules/auth/auth-token.service';
 import { AppRequest } from '../types/request-context';
 import { parseCookies } from '../utils/cookies';
 
@@ -36,7 +35,7 @@ const AUTH_REFRESH_PATHS = new Set([
 export class CsrfOriginGuard implements CanActivate {
   private readonly allowedOrigins: Set<string>;
 
-  constructor() {
+  constructor(private readonly authTokenService: AuthTokenService) {
     this.allowedOrigins = this.parseAllowedOrigins(process.env.AUTH_ALLOWED_ORIGINS);
   }
 
@@ -57,7 +56,8 @@ export class CsrfOriginGuard implements CanActivate {
 
     const cookieHeader = this.readHeader(request.headers.cookie);
     const cookies = parseCookies(cookieHeader);
-    const hasAuthCookie = Boolean(cookies[AUTH_COOKIE_ACCESS] || cookies[AUTH_COOKIE_REFRESH]);
+    const names = this.authTokenService.cookieNames();
+    const hasAuthCookie = Boolean(cookies[names.access] || cookies[names.refresh]);
     const hasAuthenticatedIdentity =
       request.context?.identityType === 'staff' || request.context?.identityType === 'guest';
 
@@ -90,6 +90,22 @@ export class CsrfOriginGuard implements CanActivate {
         'http://127.0.0.1:3000',
         'http://localhost:3001',
         'http://127.0.0.1:3001',
+        'http://localhost:3010',
+        'http://127.0.0.1:3010',
+        'http://localhost:3020',
+        'http://127.0.0.1:3020',
+        'http://localhost:3030',
+        'http://127.0.0.1:3030',
+        'http://localhost:3040',
+        'http://127.0.0.1:3040',
+        'http://localhost:3050',
+        'http://127.0.0.1:3050',
+        'http://localhost:3060',
+        'http://127.0.0.1:3060',
+        'http://localhost:3070',
+        'http://127.0.0.1:3070',
+        'http://localhost:3080',
+        'http://127.0.0.1:3080',
       ]);
     }
 

@@ -7,7 +7,7 @@ import type {
 import { apiGet, apiPost } from './client';
 
 export function getGuestSession(): Promise<GuestSessionDto> {
-  return apiGet<GuestSessionDto>('/guest/me');
+  return apiGet<GuestSessionDto>('/guest/me', { retryOnUnauthorized: false });
 }
 
 export function loginGuest(dto: GuestLoginDto): Promise<GuestSessionDto> {

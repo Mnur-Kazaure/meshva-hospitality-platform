@@ -27,7 +27,6 @@ import { StaffResetPasswordDto } from './dto/staff-reset-password.dto';
 import { UpdateStaffDto } from './dto/update-staff.dto';
 import { AuthIdentityService, GuestAuthRecord, StaffIdentityRecord } from './auth-identity.service';
 import {
-  AUTH_COOKIE_REFRESH,
   AUTH_INVALID_CREDENTIALS,
   AUTH_REFRESH_INVALID,
   STAFF_LOCKOUT_ATTEMPTS,
@@ -1596,7 +1595,8 @@ export class AuthService {
     }
 
     const parsed = parseCookies(rawCookie);
-    const refresh = parsed[AUTH_COOKIE_REFRESH];
+    const refreshCookieName = this.authTokenService.cookieNames().refresh;
+    const refresh = parsed[refreshCookieName];
     return typeof refresh === 'string' && refresh.length > 0 ? refresh : undefined;
   }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ReactNode, useEffect, useState } from 'react';
 import { GuestPermissions } from '../../../shared/types/contracts';
 import { asApiClientError, isSessionExpiredError } from '../../../shared/lib/auth/error-messages';
@@ -60,6 +60,7 @@ function requiresAuth(pathname: string): boolean {
 
 export function GuestAuthGate({ children }: GuestAuthGateProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const [session, setSession] = useState<Awaited<ReturnType<typeof getGuestSession>> | null>(null);
   const [resolved, setResolved] = useState(false);
@@ -67,6 +68,9 @@ export function GuestAuthGate({ children }: GuestAuthGateProps) {
   useEffect(() => {
     let isActive = true;
     setResolved(false);
+
+    const search = searchParams.toString();
+    const nextTarget = search ? `${pathname}?${search}` : pathname;
 
     const run = async () => {
       const isPublicPath = !requiresAuth(pathname);
@@ -107,8 +111,8 @@ export function GuestAuthGate({ children }: GuestAuthGateProps) {
           return;
         }
 
-        if (apiError?.code === 'AUTH_INVALID_CREDENTIALS') {
-          router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+        if (apiError?.status === 401 || apiError?.code === 'AUTH_INVALID_CREDENTIALS') {
+          router.replace(`/login?next=${encodeURIComponent(nextTarget)}`);
           return;
         }
 
@@ -117,7 +121,7 @@ export function GuestAuthGate({ children }: GuestAuthGateProps) {
           return;
         }
 
-        router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+        router.replace(`/login?next=${encodeURIComponent(nextTarget)}`);
       }
     };
 
@@ -126,7 +130,7 @@ export function GuestAuthGate({ children }: GuestAuthGateProps) {
     return () => {
       isActive = false;
     };
-  }, [pathname, router]);
+  }, [pathname, router, searchParams]);
 
   if (!resolved) {
     return (

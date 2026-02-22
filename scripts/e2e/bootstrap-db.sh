@@ -8,6 +8,10 @@ DB_USER="${DB_USER:-postgres}"
 DB_PASSWORD="${DB_PASSWORD:-postgres}"
 RESET_DB="${E2E_DB_RESET:-0}"
 
+if [[ -z "${E2E_DEMO_PASSWORD_HASH:-}" ]]; then
+  E2E_DEMO_PASSWORD_HASH='pbkdf2$sha512$120000$rp2G-2Vqw-NXWqQCbAe37g$zj0PVf8oMr_mOBkZWm-2PpEHjrFyPq2IDwOyrwgxbFo-o4DQ7OGCi7mRw3RuftH8-9CU7IWmkpDJzSNRqpzeTw'
+fi
+
 if ! command -v pg_isready >/dev/null 2>&1; then
   echo "pg_isready is required." >&2
   exit 1
@@ -40,6 +44,30 @@ while IFS= read -r sql_file; do
   echo "[e2e-db] -> ${sql_file}"
   PGPASSWORD="$DB_PASSWORD" "${PSQL[@]}" -f "$sql_file"
 done < <(find apps/core-api/src/database/migrations/sql -maxdepth 1 -type f -name '*.sql' | sort)
+
+echo "[e2e-db] normalizing deterministic auth credentials for e2e"
+PGPASSWORD="$DB_PASSWORD" "${PSQL[@]}" <<SQL
+UPDATE users
+SET password_hash = '${E2E_DEMO_PASSWORD_HASH}',
+    status = 'active',
+    must_change_password = false,
+    updated_at = NOW()
+WHERE lower(email) IN (
+  'platform.admin@meshva.com',
+  'owner@meshva.com',
+  'manager@meshva.com',
+  'frontdesk@meshva.com',
+  'finance@meshva.com',
+  'housekeeping@meshva.com',
+  'kitchen@meshva.com'
+);
+
+UPDATE guests_auth
+SET password_hash = '${E2E_DEMO_PASSWORD_HASH}',
+    status = 'active',
+    updated_at = NOW()
+WHERE lower(email) = 'amina.guest@meshva.demo';
+SQL
 
 echo "[e2e-db] ensuring guest inventory horizon"
 DB_HOST="$DB_HOST" \

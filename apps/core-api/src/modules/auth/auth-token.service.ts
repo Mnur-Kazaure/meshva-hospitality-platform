@@ -29,9 +29,11 @@ interface JwtHeader {
 @Injectable()
 export class AuthTokenService {
   private readonly jwtSecret: string;
+  private readonly secureCookies: boolean;
 
   constructor() {
     this.jwtSecret = process.env.AUTH_JWT_SECRET ?? 'meshva-dev-auth-secret-change-me';
+    this.secureCookies = this.resolveSecureCookieMode();
   }
 
   createAccessToken(input: {
@@ -114,7 +116,7 @@ export class AuthTokenService {
   }
 
   getCookieOptions() {
-    const secure = true;
+    const secure = this.secureCookies;
 
     return {
       access: {
@@ -142,11 +144,32 @@ export class AuthTokenService {
   }
 
   cookieNames() {
+    if (!this.secureCookies) {
+      return {
+        access: 'meshva_at',
+        refresh: 'meshva_rt',
+        csrf: AUTH_COOKIE_CSRF,
+      };
+    }
+
     return {
       access: AUTH_COOKIE_ACCESS,
       refresh: AUTH_COOKIE_REFRESH,
       csrf: AUTH_COOKIE_CSRF,
     };
+  }
+
+  private resolveSecureCookieMode(): boolean {
+    const configured = process.env.AUTH_COOKIE_SECURE?.trim().toLowerCase();
+    if (configured === 'true') {
+      return true;
+    }
+
+    if (configured === 'false') {
+      return false;
+    }
+
+    return process.env.NODE_ENV === 'production';
   }
 
   private sign(payload: AccessTokenPayload): string {

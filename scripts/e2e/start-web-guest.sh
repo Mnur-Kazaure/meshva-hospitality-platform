@@ -13,6 +13,4 @@ export NEXT_PUBLIC_DASHBOARD_URL_FINANCE="${NEXT_PUBLIC_DASHBOARD_URL_FINANCE:-h
 export NEXT_PUBLIC_DASHBOARD_URL_HOUSEKEEPING="${NEXT_PUBLIC_DASHBOARD_URL_HOUSEKEEPING:-http://127.0.0.1:3010/__role/housekeeping}"
 export NEXT_PUBLIC_DASHBOARD_URL_KITCHEN="${NEXT_PUBLIC_DASHBOARD_URL_KITCHEN:-http://127.0.0.1:3010/__role/kitchen}"
 
-exec pnpm turbo run dev --parallel \
-  --filter=@meshva/web-front-desk \
-  --filter=@meshva/web-guest
+exec pnpm --filter=@meshva/web-guest dev

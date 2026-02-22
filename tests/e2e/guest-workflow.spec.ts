@@ -17,6 +17,7 @@ test.describe('Guest Portal E2E', () => {
       await page.goto('/home');
       await expect(page.getByRole('heading', { name: 'Search Hotels' })).toBeVisible();
 
+      await page.getByLabel('Location').fill('');
       await page.getByLabel('Check-in').fill(checkIn);
       await page.getByLabel('Check-out').fill(checkOut);
       await page.getByLabel('Adults').selectOption('1');

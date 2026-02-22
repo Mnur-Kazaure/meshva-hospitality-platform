@@ -35,6 +35,8 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.49.1",
+    "eslint": "8.57.1",
+    "eslint-config-next": "15.2.2",
     "turbo": "^2.5.0",
     "typescript": "^5.8.2"
   }

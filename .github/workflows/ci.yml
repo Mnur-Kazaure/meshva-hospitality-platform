@@ -8,7 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      NPM_REGISTRY_URL: ${{ secrets.NPM_REGISTRY_URL != '' && secrets.NPM_REGISTRY_URL || 'https://registry.npmjs.org' }}
+      NPM_REGISTRY_URL: "${{ secrets.NPM_REGISTRY_URL != '' && secrets.NPM_REGISTRY_URL || 'https://registry.npmjs.org' }}"
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
@@ -75,7 +75,7 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     env:
-      NPM_REGISTRY_URL: ${{ secrets.NPM_REGISTRY_URL != '' && secrets.NPM_REGISTRY_URL || 'https://registry.npmjs.org' }}
+      NPM_REGISTRY_URL: "${{ secrets.NPM_REGISTRY_URL != '' && secrets.NPM_REGISTRY_URL || 'https://registry.npmjs.org' }}"
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/meshva_hospitality

@@ -8,7 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      NPM_REGISTRY_URL: ${{ secrets.NPM_REGISTRY_URL }}
+      NPM_REGISTRY_URL: ${{ secrets.NPM_REGISTRY_URL != '' && secrets.NPM_REGISTRY_URL || 'https://registry.npmjs.org' }}
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
@@ -21,24 +21,23 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .node-version
-          registry-url: ${{ secrets.NPM_REGISTRY_URL }}
+          registry-url: ${{ env.NPM_REGISTRY_URL }}
           cache: pnpm
 
       - name: Validate dependency governance config
+        if: ${{ secrets.NPM_REGISTRY_URL != '' }}
         run: |
-          if [ -z "${NPM_REGISTRY_URL}" ]; then
-            echo "NPM_REGISTRY_URL secret is required."
-            exit 1
-          fi
           if [ -z "${NPM_TOKEN}" ]; then
             echo "NPM_TOKEN secret is required."
             exit 1
           fi
 
       - name: Enforce governance checks
+        if: ${{ secrets.NPM_REGISTRY_URL != '' }}
         run: bash scripts/verify-dependency-governance.sh
 
       - name: Configure internal registry auth
+        if: ${{ secrets.NPM_REGISTRY_URL != '' && secrets.NPM_TOKEN != '' }}
         run: |
           REGISTRY_HOST="${NPM_REGISTRY_URL#*://}"
           REGISTRY_HOST="${REGISTRY_HOST%/}/"
@@ -76,7 +75,7 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     env:
-      NPM_REGISTRY_URL: ${{ secrets.NPM_REGISTRY_URL }}
+      NPM_REGISTRY_URL: ${{ secrets.NPM_REGISTRY_URL != '' && secrets.NPM_REGISTRY_URL || 'https://registry.npmjs.org' }}
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/meshva_hospitality
@@ -106,24 +105,23 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .node-version
-          registry-url: ${{ secrets.NPM_REGISTRY_URL }}
+          registry-url: ${{ env.NPM_REGISTRY_URL }}
           cache: pnpm
 
       - name: Validate dependency governance config
+        if: ${{ secrets.NPM_REGISTRY_URL != '' }}
         run: |
-          if [ -z "${NPM_REGISTRY_URL}" ]; then
-            echo "NPM_REGISTRY_URL secret is required."
-            exit 1
-          fi
           if [ -z "${NPM_TOKEN}" ]; then
             echo "NPM_TOKEN secret is required."
             exit 1
           fi
 
       - name: Enforce governance checks
+        if: ${{ secrets.NPM_REGISTRY_URL != '' }}
         run: bash scripts/verify-dependency-governance.sh
 
       - name: Configure internal registry auth
+        if: ${{ secrets.NPM_REGISTRY_URL != '' && secrets.NPM_TOKEN != '' }}
         run: |
           REGISTRY_HOST="${NPM_REGISTRY_URL#*://}"
           REGISTRY_HOST="${REGISTRY_HOST%/}/"
